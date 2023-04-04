@@ -9,6 +9,7 @@ const databaseConnection = require('./config/database')
 const categoriesRoutes = require('./routes/categoryRoute')
 const subCategoriesRoutes = require('./routes/subCategoryRoute')
 const brandsRoutes = require('./routes/brandRoute')
+const productsRoutes = require('./routes/productRoute')
 
 // Utilities
 const ApiError = require('./utilities/apiError')
@@ -36,6 +37,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use(`${API}/categories`, categoriesRoutes)
 app.use(`${API}/subcategories`, subCategoriesRoutes)
 app.use(`${API}/brands`, brandsRoutes)
+app.use(`${API}/products`, productsRoutes)
 
 app.all('*', (req, res, next) => {
     next(new ApiError(`Can't find this route ${req.originalUrl}`, 400))
