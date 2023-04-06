@@ -9,10 +9,26 @@ const ProductModel = require('../models/productModel')
 // @route   GET /api/v1/products
 // @access  Private
 exports.getProducts = asyncHandler(async (req, res) => {
+
+    // Filtering
+    const queryStringObj = { ...req.query }
+    const excludesFields = ['page', 'sort', 'limit', 'fields']
+    excludesFields.forEach((field) => delete queryStringObj[field])
+
+    // Apply filter
+    let queryString = JSON.stringify(queryStringObj)
+    queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
+
+    // Pagination
     const page = req.query.page || 1
-    const limit = req.query.limit || 5
+    const limit = req.query.limit || 50
     const skip = (page - 1) * limit
-    const products = await ProductModel.find({}).skip(skip).limit(limit).populate({ path: 'category', select: 'name -_id' })
+
+    // QUERY build
+    const mongooseQuery = ProductModel.find(JSON.parse(queryString)).skip(skip).limit(limit).populate({ path: 'category', select: 'name -_id' })
+
+    // Execute QUERY
+    const products = await mongooseQuery
     res.status(200).json({ results: products.length, page, data: products })
 })
 
