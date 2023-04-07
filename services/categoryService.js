@@ -4,16 +4,26 @@ const ApiError = require('../utilities/apiError')
 
 const CategoryModel = require('../models/categoryModel')
 
+const ApiFeatures = require('../utilities/apiFeatures')
+
 
 // @desc    Get list of categories
 // @route   GET /api/v1/categories
 // @access  Private
 exports.getCategories = asyncHandler(async (req, res) => {
-    const page = req.query.page || 1
-    const limit = req.query.limit || 5
-    const skip = (page - 1) * limit
-    const categories = await CategoryModel.find({}).skip(skip).limit(limit)
-    res.status(200).json({ results: categories.length, page, data: categories })
+    // QUERY build
+    const documentsCount = await CategoryModel.countDocuments()
+    const apiFeatures = new ApiFeatures(CategoryModel.find(), req.query)
+        .pagination(documentsCount)
+        .filter()
+        .search()
+        .sort()
+        .limitFields()
+
+    // Execute QUERY
+    const { mongooseQuery, paginationResult } = apiFeatures
+    const categories = await mongooseQuery
+    res.status(200).json({ results: categories.length, paginationResult, data: categories })
 })
 
 // @desc    Get a specific category by id

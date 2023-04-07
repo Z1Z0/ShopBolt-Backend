@@ -13,7 +13,12 @@ exports.getProducts = asyncHandler(async (req, res) => {
 
     // QUERY build
     const documentsCount = await ProductModel.countDocuments()
-    const apiFeatures = new ApiFeatures(ProductModel.find(), req.query).pagination(documentsCount).filter().search().sort().limitFields()
+    const apiFeatures = new ApiFeatures(ProductModel.find(), req.query)
+        .pagination(documentsCount)
+        .filter()
+        .search('Products')
+        .sort()
+        .limitFields()
     // let mongooseQuery = ProductModel.find(JSON.parse(queryString)).skip(skip).limit(limit).populate({ path: 'category', select: 'name -_id' })
 
     // Execute QUERY

@@ -4,6 +4,8 @@ const ApiError = require('../utilities/apiError')
 
 const SubCategoryModel = require('../models/subCategoryModel')
 
+const ApiFeatures = require('../utilities/apiFeatures')
+
 exports.createFilterObject = (req, res, next) => {
     let filterObject = {}
     if (req.params.categoryID) {
@@ -17,15 +19,19 @@ exports.createFilterObject = (req, res, next) => {
 // @route   GET /api/v1/subcategories
 // @access  Private
 exports.getSubCategories = asyncHandler(async (req, res) => {
-    const page = req.query.page || 1
-    const limit = req.query.limit || 5
-    const skip = (page - 1) * limit
+    // QUERY build
+    const documentsCount = await SubCategoryModel.countDocuments()
+    const apiFeatures = new ApiFeatures(SubCategoryModel.find(), req.query)
+        .pagination(documentsCount)
+        .filter()
+        .search()
+        .sort()
+        .limitFields()
 
-    const subCategories = await SubCategoryModel.find(req.filterObj)
-        .skip(skip)
-        .limit(limit)
-    // .populate({ path: 'category', select: 'name -_id' })
-    res.status(200).json({ results: subCategories.length, page, data: subCategories })
+    // Execute QUERY
+    const { mongooseQuery, paginationResult } = apiFeatures
+    const subCategories = await mongooseQuery
+    res.status(200).json({ results: subCategories.length, paginationResult, data: subCategories })
 })
 
 exports.setCategoryIDToBody = (req, res, next) => {

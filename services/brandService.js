@@ -4,16 +4,26 @@ const ApiError = require('../utilities/apiError')
 
 const BrandsModel = require('../models/brandModel')
 
+const ApiFeatures = require('../utilities/apiFeatures')
+
 
 // @desc    Get list of Brands
 // @route   GET /api/v1/brands
 // @access  Private
 exports.getBrands = asyncHandler(async (req, res) => {
-    const page = req.query.page || 1
-    const limit = req.query.limit || 5
-    const skip = (page - 1) * limit
-    const brands = await BrandsModel.find({}).skip(skip).limit(limit)
-    res.status(200).json({ results: brands.length, page, data: brands })
+    // QUERY build
+    const documentsCount = await BrandsModel.countDocuments()
+    const apiFeatures = new ApiFeatures(BrandsModel.find(), req.query)
+        .pagination(documentsCount)
+        .filter()
+        .search()
+        .sort()
+        .limitFields()
+
+    // Execute QUERY
+    const { mongooseQuery, paginationResult } = apiFeatures
+    const brands = await mongooseQuery
+    res.status(200).json({ results: brands.length, paginationResult, data: brands })
 })
 
 // @desc    Get a specific brand by id
