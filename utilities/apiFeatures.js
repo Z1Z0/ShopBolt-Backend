@@ -40,14 +40,24 @@ class ApiFeatures {
         return this
     }
 
-    search() {
+    search(modelName) {
         // Search query
         if (this.queryString.search) {
-            const query = {}
-            query.$or = [
-                { title: { $regex: this.queryString.search, $options: 'i' } },
-                { description: { $regex: this.queryString.search, $options: 'i' } }
-            ]
+            let query = {}
+
+            switch (modelName) {
+                case 'Products':
+                    query.$or = [
+                        { title: { $regex: this.queryString.search, $options: 'i' } },
+                        { description: { $regex: this.queryString.search, $options: 'i' } }
+                    ]
+                    break
+
+                default:
+                    query = { name: { $regex: this.queryString.search, $options: 'i' } }
+                    break
+            }
+
             this.mongooseQuery = this.mongooseQuery.find(query)
         }
         return this
