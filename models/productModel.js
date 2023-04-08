@@ -30,7 +30,7 @@ const productSchema = mongoose.Schema({
         type: Number,
         required: [true, 'Product price is required'],
         trim: true,
-        max: [20, 'Product price is too high']
+        max: [100000, 'Product price is too high']
     },
     priceAfterDiscount: {
         type: Number
@@ -46,7 +46,7 @@ const productSchema = mongoose.Schema({
         ref: 'Category',
         required: [true, 'Product should belong to category']
     },
-    subCategory: {
+    subCategories: {
         type: mongoose.Schema.ObjectId,
         ref: 'SubCategory'
     },
@@ -64,5 +64,13 @@ const productSchema = mongoose.Schema({
         default: 0
     }
 }, { timestamps: true })
+
+productSchema.pre(/^find/, function (next) {
+    this.populate({
+        path: 'category',
+        select: 'name -_id'
+    })
+    next()
+})
 
 module.exports = mongoose.model('Product', productSchema)
