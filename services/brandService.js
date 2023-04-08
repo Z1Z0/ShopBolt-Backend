@@ -6,6 +6,8 @@ const BrandsModel = require('../models/brandModel')
 
 const ApiFeatures = require('../utilities/apiFeatures')
 
+const factory = require('./handlers/handlersFactory')
+
 
 // @desc    Get list of Brands
 // @route   GET /api/v1/brands
@@ -29,48 +31,19 @@ exports.getBrands = asyncHandler(async (req, res) => {
 // @desc    Get a specific brand by id
 // @route   GET /api/v1/brands/:id
 // @access  Private
-exports.getBrand = asyncHandler(async (req, res, next) => {
-    const { id } = req.params
-    const brand = await BrandsModel.findById(id)
-
-    if (!brand) {
-        return next(new ApiError(`There is no brand for this id ${id}`, 404))
-    }
-    res.status(200).json({ data: brand })
-})
+exports.getBrand = factory.getOne(BrandsModel)
 
 // @desc    Create brand
 // @route   POST /api/v1/brands
 // @access  Private
-exports.createBrand = asyncHandler(async (req, res) => {
-    const { name } = req.body
-    const brand = await BrandsModel.create({ name, slug: slugify(name) })
-    res.status(201).json({ data: brand })
-})
+exports.createBrand = factory.createOne(BrandsModel)
 
 // @desc    Update a specific brand
 // @route   PUT /api/v1/brands/:id
 // @access  Private
-exports.updateBrand = asyncHandler(async (req, res, next) => {
-    const { id } = req.params
-    const { name } = req.body
-    const brand = await BrandsModel.findByIdAndUpdate({ _id: id }, { name, slug: slugify(name) }, { new: true })
-
-    if (!brand) {
-        return next(new ApiError(`There is no brand for this id ${id}`, 404))
-    }
-    res.status(200).json({ data: brand })
-})
+exports.updateBrand = factory.updateOne(BrandsModel)
 
 // @desc    Delete a specific brand
 // @route   DELETE /api/v1/brands/:id
 // @access  Private
-exports.deleteBrand = asyncHandler(async (req, res, next) => {
-    const { id } = req.params
-    const brand = await BrandsModel.findByIdAndDelete(id)
-
-    if (!brand) {
-        return next(new ApiError(`There is no brand for this id ${id}`, 404))
-    }
-    res.status(204).json()
-})
+exports.deleteBrand = factory.deleteOne(BrandsModel)

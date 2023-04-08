@@ -6,6 +6,8 @@ const SubCategoryModel = require('../models/subCategoryModel')
 
 const ApiFeatures = require('../utilities/apiFeatures')
 
+const factory = require('./handlers/handlersFactory')
+
 exports.createFilterObject = (req, res, next) => {
     let filterObject = {}
     if (req.params.categoryID) {
@@ -44,49 +46,19 @@ exports.setCategoryIDToBody = (req, res, next) => {
 // @desc    Create SubCategory
 // @route   POST /api/v1/subCategories
 // @access  Private
-exports.createSubCategory = asyncHandler(async (req, res) => {
-    const { name, category } = req.body
-    const subCategory = await SubCategoryModel.create({ name, slug: slugify(name), category })
-    return res.status(201).json({ data: subCategory })
-})
+exports.createSubCategory = factory.createOne(SubCategoryModel)
 
 // @desc    Get a specific subCategory by id
 // @route   GET /api/v1/subcategories/:id
 // @access  Private
-exports.getSubCategory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params
-    const subCategory = await SubCategoryModel.findById(id)
-    // .populate({ path: 'category', select: 'name -_id' })
-
-    if (!subCategory) {
-        return next(new ApiError(`There is no SubCategory for this id ${id}`, 404))
-    }
-    res.status(200).json({ data: subCategory })
-})
+exports.getSubCategory = factory.getOne(SubCategoryModel)
 
 // @desc    Update a specific SubCategory
 // @route   PUT /api/v1/subcategories/:id
 // @access  Private
-exports.updateSubCategory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params
-    const { name, category } = req.body
-    const subCategory = await SubCategoryModel.findByIdAndUpdate({ _id: id }, { name, slug: slugify(name), category }, { new: true })
-
-    if (!subCategory) {
-        return next(new ApiError(`There is no SubCategory for this id ${id}`, 404))
-    }
-    res.status(200).json({ data: subCategory })
-})
+exports.updateSubCategory = factory.updateOne(SubCategoryModel)
 
 // @desc    Delete a specific SubCategory
 // @route   DELETE /api/v1/subcategories/:id
 // @access  Private
-exports.deleteSubCategory = asyncHandler(async (req, res, next) => {
-    const { id } = req.params
-    const subCategory = await SubCategoryModel.findByIdAndDelete(id)
-
-    if (!subCategory) {
-        return next(new ApiError(`There is no SubCategory for this id ${id}`, 404))
-    }
-    res.status(204).json()
-})
+exports.deleteSubCategory = factory.deleteOne(SubCategoryModel)
