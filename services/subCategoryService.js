@@ -1,14 +1,10 @@
-const asyncHandler = require('express-async-handler')
-const slugify = require('slugify')
-const ApiError = require('../utilities/apiError')
-
 const SubCategoryModel = require('../models/subCategoryModel')
-
-const ApiFeatures = require('../utilities/apiFeatures')
 
 const factory = require('./handlers/handlersFactory')
 
+// Nested Route for Create
 exports.createFilterObject = (req, res, next) => {
+
     let filterObject = {}
     if (req.params.categoryID) {
         filterObject = { category: req.params.categoryID }
@@ -17,31 +13,18 @@ exports.createFilterObject = (req, res, next) => {
     next()
 }
 
-// @desc    Get list of SubCategories
-// @route   GET /api/v1/subcategories
-// @access  Private
-exports.getSubCategories = asyncHandler(async (req, res) => {
-    // QUERY build
-    const documentsCount = await SubCategoryModel.countDocuments()
-    const apiFeatures = new ApiFeatures(SubCategoryModel.find(), req.query)
-        .pagination(documentsCount)
-        .filter()
-        .search()
-        .sort()
-        .limitFields()
-
-    // Execute QUERY
-    const { mongooseQuery, paginationResult } = apiFeatures
-    const subCategories = await mongooseQuery
-    res.status(200).json({ results: subCategories.length, paginationResult, data: subCategories })
-})
-
+// Nested Route for Get
 exports.setCategoryIDToBody = (req, res, next) => {
     if (!req.body.category) {
         req.body.category = req.params.categoryID
     }
     next()
 }
+
+// @desc    Get list of SubCategories
+// @route   GET /api/v1/subcategories
+// @access  Private
+exports.getSubCategories = factory.getAll(SubCategoryModel)
 
 // @desc    Create SubCategory
 // @route   POST /api/v1/subCategories
