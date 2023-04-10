@@ -1,3 +1,5 @@
+const path = require('path')
+
 // Packages
 const express = require('express')
 const dotenv = require('dotenv')
@@ -28,6 +30,7 @@ const API = process.env.API_PATH || '/api/v1'
 
 // Middlewares
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'uploads')))
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
     console.log(`mode: ${process.env.NODE_ENV}`)
