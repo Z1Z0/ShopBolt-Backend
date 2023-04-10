@@ -19,6 +19,9 @@ exports.createBrandValidator = [
             req.body.slug = slugify(val)
             return true
         }),
+    body('image')
+        .notEmpty()
+        .withMessage('Brand image is required'),
     validatorMiddleware
 ]
 

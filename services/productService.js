@@ -41,7 +41,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
                     .jpeg({ quality: 95 })
                     .toFile(`uploads/products/${imageName}`)
 
-                req.body.images = imageName.push(imageName)
+                req.body.images.push(imageName)
             })
         )
         next()

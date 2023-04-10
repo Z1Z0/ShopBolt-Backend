@@ -19,6 +19,9 @@ exports.createCategoryValidator = [
             req.body.slug = slugify(val)
             return true
         }),
+    body('image')
+        .notEmpty()
+        .withMessage('Category image is required'),
     validatorMiddleware
 ]
 
@@ -28,6 +31,8 @@ exports.updateCategoryMiddleware = [
         req.body.slug = slugify(val)
         return true
     }),
+    body('image')
+        .optional(),
     validatorMiddleware
 ]
 

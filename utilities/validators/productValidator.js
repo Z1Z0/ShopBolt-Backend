@@ -143,6 +143,13 @@ exports.updateProductValidator = [
             req.body.slug = slugify(val)
             return true
         }),
+    body('imageCover')
+        .optional(),
+
+    body('images')
+        .optional()
+        .isArray()
+        .withMessage('Images must be an array of Strings'),
     validatorMiddleware
 ]
 
