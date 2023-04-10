@@ -6,7 +6,7 @@ const productSchema = mongoose.Schema({
         required: true,
         trim: true,
         minlength: [3, 'Product title too short, minimum character is 3'],
-        maxlength: [100, 'Product title too long, maximum character is 3']
+        maxlength: [250, 'Product title too long, maximum character is 100']
     },
     slug: {
         type: String,
@@ -71,6 +71,30 @@ productSchema.pre(/^find/, function (next) {
         select: 'name -_id'
     })
     next()
+})
+
+const setImageURL = (doc) => {
+    if (doc.imageCover) {
+        const imageURL = `${process.env.BASE_URL}/categories/${doc.imageCover}`
+        doc.imageCover = imageURL
+    }
+
+    if (doc.images) {
+        const imagesList = []
+        doc.images.forEach((image) => {
+            const imageURL = `${process.env.BASE_URL}/categories/${image}`
+            imagesList.push(imageURL)
+        })
+        doc.images = imagesList
+    }
+}
+
+productSchema.post('init', (doc) => {
+    setImageURL(doc)
+})
+
+productSchema.post('save', (doc) => {
+    setImageURL(doc)
 })
 
 module.exports = mongoose.model('Product', productSchema)

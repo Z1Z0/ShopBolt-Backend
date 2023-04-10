@@ -1,6 +1,11 @@
 const BrandsModel = require('../models/brandModel')
-
 const factory = require('./handlers/handlersFactory')
+const { uploadSingleImage } = require('../middlewares/imageMiddlewares/uploadImageMiddleware')
+const { resizeImage } = require('../middlewares/imageMiddlewares/resizingImageMiddleware')
+
+exports.uploadBrandImage = uploadSingleImage('image')
+
+exports.resizeImage = resizeImage('brands', 600, 600, 'jpeg', 95)
 
 // @desc    Get list of Brands
 // @route   GET /api/v1/brands

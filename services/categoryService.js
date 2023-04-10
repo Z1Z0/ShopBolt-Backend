@@ -1,6 +1,11 @@
 const CategoryModel = require('../models/categoryModel')
-
 const factory = require('./handlers/handlersFactory')
+const { uploadSingleImage } = require('../middlewares/imageMiddlewares/uploadImageMiddleware')
+const { resizeImage } = require('../middlewares/imageMiddlewares/resizingImageMiddleware')
+
+exports.uploadCategoryImage = uploadSingleImage('image')
+
+exports.resizeImage = resizeImage('categories', 600, 600, 'jpeg', 95)
 
 // @desc    Get list of categories
 // @route   GET /api/v1/categories

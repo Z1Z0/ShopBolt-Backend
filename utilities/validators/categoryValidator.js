@@ -19,15 +19,20 @@ exports.createCategoryValidator = [
             req.body.slug = slugify(val)
             return true
         }),
+    body('image')
+        .notEmpty()
+        .withMessage('Category image is required'),
     validatorMiddleware
 ]
 
 exports.updateCategoryMiddleware = [
     check('id').isMongoId().withMessage('Invalid category ID format'),
-    body('name').custom((val, { req }) => {
+    body('name').optional().custom((val, { req }) => {
         req.body.slug = slugify(val)
         return true
     }),
+    body('image')
+        .optional(),
     validatorMiddleware
 ]
 
