@@ -5,7 +5,7 @@ const { resizeImage } = require('../middlewares/imageMiddlewares/resizingImageMi
 
 exports.uploadBrandImage = uploadSingleImage('image')
 
-exports.resizeImage = resizeImage('brands', 600, 600, 'jpeg', 95)
+exports.resizeImage = resizeImage('brand', 'brands', 600, 600, 'jpeg', 95)
 
 // @desc    Get list of Brands
 // @route   GET /api/v1/brands
