@@ -4,6 +4,7 @@ const { uploadSingleImage } = require('../middlewares/imageMiddlewares/uploadIma
 const asyncHandler = require('express-async-handler')
 const { v4: uuidv4 } = require('uuid')
 const sharp = require('sharp')
+const bcrypt = require('bcryptjs')
 
 exports.uploadUserImage = uploadSingleImage('profileImage')
 
@@ -41,7 +42,34 @@ exports.createUser = factory.createOne(UserModel)
 // @desc    Update a specific User
 // @route   PUT /api/v1/users/:id
 // @access  Private
-exports.updateUser = factory.updateOne(UserModel)
+exports.updateUser = asyncHandler(async (req, res, next) => {
+    const user = await UserModel.findByIdAndUpdate(req.params.id, {
+        name: req.body.name,
+        slug: req.body.slug,
+        phone: req.body.phone,
+        profileImage: req.body.profileImage,
+        role: req.body.role
+    }, { new: true })
+
+    if (!user) {
+        return next(new ApiError(`There is no user for this id ${req.params.id}`, 404))
+    }
+    res.status(200).json({ data: user })
+})
+
+// @desc    Update a specific User
+// @route   PUT /api/v1/users/:id
+// @access  Private
+exports.changeUserPassword = asyncHandler(async (req, res, next) => {
+    const user = await UserModel.findByIdAndUpdate(req.params.id, {
+        password: await bcrypt.hash(req.body.password, 12)
+    }, { new: true })
+
+    if (!user) {
+        return next(new ApiError(`There is no user for this id ${req.params.id}`, 404))
+    }
+    res.status(200).json({ data: user })
+})
 
 // @desc    Delete a specific User
 // @route   DELETE /api/v1/users/:id

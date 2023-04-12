@@ -4,7 +4,7 @@ const validatorMiddleware = require('../../middlewares/validatorMiddleware')
 const UserModel = require('../../models/userModel')
 
 exports.createUserValidator = [
-    check('name')
+    body('name')
         .notEmpty()
         .withMessage('User name required')
         .isLength({ min: 3 })
@@ -13,7 +13,7 @@ exports.createUserValidator = [
             req.body.slug = slugify(val)
             return true
         }),
-    check('email')
+    body('email')
         .notEmpty()
         .withMessage('Email is required')
         .isEmail()
@@ -25,7 +25,7 @@ exports.createUserValidator = [
                 }
             })
         ),
-    check('phone')
+    body('phone')
         .notEmpty()
         .withMessage('Phone number is required')
         .isMobilePhone('ar-EG')
@@ -37,14 +37,23 @@ exports.createUserValidator = [
                 }
             })
         ),
-    check('password')
+    body('password')
         .notEmpty()
         .withMessage('Password is required')
         .isLength({ min: 6 })
-        .withMessage('Password should be at least 6 characters'),
-    check('profileImage')
+        .withMessage('Password should be at least 6 characters')
+        .custom((password, { req }) => {
+            if (password !== req.body.passwordConfirm) {
+                throw new Error('Passwords do not match')
+            }
+            return true
+        }),
+    body('passwordConfirm')
+        .notEmpty()
+        .withMessage('Password confirm is required'),
+    body('profileImage')
         .optional(),
-    check('role')
+    body('role')
         .optional(),
     validatorMiddleware
 ]
@@ -68,6 +77,7 @@ exports.updateUserMiddleware = [
             if (email) {
                 throw new Error('Email can not be changed')
             }
+            return true
         }),
     body('password')
         .optional()
