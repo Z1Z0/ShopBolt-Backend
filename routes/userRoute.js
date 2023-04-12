@@ -4,9 +4,9 @@ const router = express.Router()
 
 const { getUsers, getUser, createUser, updateUser, deleteUser, uploadUserImage, resizeImage } = require('../services/userService')
 
-// const { getBrandMiddleware, createBrandValidator, updateBrandMiddleware, deleteBrandMiddleware } = require('../utilities/validators/brandValidator')
+const { createUserValidator, getUserMiddleware, updateUserMiddleware, deleteUserMiddleware } = require('../utilities/validators/userValidator')
 
-router.route('/').get(getUsers).post(uploadBrandImage, resizeImage, createUser)
-router.route('/:id').get(getUser).put(uploadBrandImage, resizeImage, updateUser).delete(deleteUser)
+router.route('/').get(getUsers).post(uploadUserImage, resizeImage, createUserValidator, createUser)
+router.route('/:id').get(getUserMiddleware, getUser).put(uploadUserImage, resizeImage, updateUserMiddleware, updateUser).delete(deleteUserMiddleware, deleteUser)
 
 module.exports = router

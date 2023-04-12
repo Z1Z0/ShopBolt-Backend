@@ -10,13 +10,15 @@ exports.uploadUserImage = uploadSingleImage('profileImage')
 exports.resizeImage = asyncHandler(async (req, res, next) => {
 
     const filename = `user-${uuidv4()}-${Date.now()}.jpeg`
-    await sharp(req.file.buffer)
-        .resize(600, 600)
-        .toFormat('jpeg')
-        .jpeg({ quality: 95 })
-        .toFile(`uploads/users/${filename}`)
+    if (req.file) {
+        await sharp(req.file.buffer)
+            .resize(600, 600)
+            .toFormat('jpeg')
+            .jpeg({ quality: 95 })
+            .toFile(`uploads/users/${filename}`)
 
-    req.body.profileImage = filename
+        req.body.profileImage = filename
+    }
 
     next()
 })
