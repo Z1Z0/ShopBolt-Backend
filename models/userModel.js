@@ -20,10 +20,7 @@ const userSchema = mongoose.Schema({
         lowercase: true
     },
 
-    phone: {
-        type: String,
-        unique: true
-    },
+    phone: String,
 
     profileImage: String,
 
