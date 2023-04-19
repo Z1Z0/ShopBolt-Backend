@@ -2,6 +2,8 @@ const express = require('express')
 
 const router = express.Router()
 
+const { authorizationSecurity, allowedTo } = require('../services/authService')
+
 const {
     getUsers,
     getUser,
@@ -10,7 +12,8 @@ const {
     changeUserPassword,
     deleteUser,
     uploadUserImage,
-    resizeImage
+    resizeImage,
+    getLoggedUserData
 } = require('../services/userService')
 
 const {
@@ -22,13 +25,42 @@ const {
 } = require('../utilities/validators/userValidator')
 
 router.route('/')
-    .get(getUsers)
-    .post(uploadUserImage, resizeImage, createUserValidator, createUser)
+    .get(
+        authorizationSecurity,
+        allowedTo('admin', 'manager'),
+        getUsers
+    )
+    .post(
+        authorizationSecurity,
+        allowedTo('manager', 'admin'),
+        uploadUserImage,
+        resizeImage,
+        createUserValidator,
+        createUser
+    )
+
+router.route('/userInfo')
+    .get(authorizationSecurity, getLoggedUserData, getUser)
 
 router.route('/:id')
-    .get(getUserValidator, getUser)
-    .put(uploadUserImage, resizeImage, updateUserValidator, updateUser)
-    .delete(deleteUserValidator, deleteUser)
+    .get(
+        getUserValidator,
+        getUser
+    )
+    .put(
+        authorizationSecurity,
+        allowedTo('admin'),
+        uploadUserImage,
+        resizeImage,
+        updateUserValidator,
+        updateUser
+    )
+    .delete(
+        authorizationSecurity,
+        allowedTo('admin'),
+        deleteUserValidator,
+        deleteUser
+    )
 
 router.route('/changePassword/:id')
     .put(changeUserPasswordValidator, changeUserPassword)

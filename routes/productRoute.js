@@ -2,6 +2,8 @@ const express = require('express')
 
 const router = express.Router()
 
+const { authorizationSecurity, allowedTo } = require('../services/authService')
+
 const {
     getProducts,
     getProduct,
@@ -20,12 +22,36 @@ const {
 } = require('../utilities/validators/productValidator')
 
 router.route('/')
-    .get(getProducts)
-    .post(uploadProductImages, resizeImage, createProductValidator, createProduct)
+    .get(
+        getProducts
+    )
+    .post(
+        authorizationSecurity,
+        allowedTo('manager', 'admin'),
+        uploadProductImages,
+        resizeImage,
+        createProductValidator,
+        createProduct
+    )
 
 router.route('/:id')
-    .get(getProductValidator, getProduct)
-    .put(uploadProductImages, resizeImage, updateProductValidator, updateProduct)
-    .delete(deleteProductValidator, deleteProduct)
+    .get(
+        getProductValidator,
+        getProduct
+    )
+    .put(
+        authorizationSecurity,
+        allowedTo('manager', 'admin'),
+        uploadProductImages,
+        resizeImage,
+        updateProductValidator,
+        updateProduct
+    )
+    .delete(
+        authorizationSecurity,
+        allowedTo('admin'),
+        deleteProductValidator,
+        deleteProduct
+    )
 
 module.exports = router

@@ -41,3 +41,19 @@ exports.signupValidator = [
         .withMessage('Password confirm is required'),
     validatorMiddleware
 ]
+
+exports.signinValidator = [
+    body('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Please enter valid email'),
+
+    body('password')
+        .notEmpty()
+        .withMessage('Password is required')
+        .isLength({ min: 6 })
+        .withMessage('Password should be at least 6 characters'),
+
+    validatorMiddleware
+]

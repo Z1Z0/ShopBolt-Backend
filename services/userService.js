@@ -62,7 +62,8 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.changeUserPassword = asyncHandler(async (req, res, next) => {
     const user = await UserModel.findByIdAndUpdate(req.params.id, {
-        password: await bcrypt.hash(req.body.password, 12)
+        password: await bcrypt.hash(req.body.password, 12),
+        passwordChangedAt: Date.now()
     }, { new: true })
 
     if (!user) {
@@ -75,3 +76,8 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/users/:id
 // @access  Private
 exports.deleteUser = factory.deleteOne(UserModel)
+
+exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
+    req.params.id = req.user._id
+    next()
+})
