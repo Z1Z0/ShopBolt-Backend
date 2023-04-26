@@ -2,7 +2,7 @@ const express = require('express')
 
 const router = express.Router()
 
-const { authorizationSecurity, allowedTo } = require('../services/authService')
+const authService = require('../services/authService')
 
 const {
     getProducts,
@@ -26,8 +26,8 @@ router.route('/')
         getProducts
     )
     .post(
-        authorizationSecurity,
-        allowedTo('manager', 'admin'),
+        authService.authorizationSecurity,
+        // authService.allowedTo('manager', 'admin'),
         uploadProductImages,
         resizeImage,
         createProductValidator,
@@ -40,16 +40,16 @@ router.route('/:id')
         getProduct
     )
     .put(
-        authorizationSecurity,
-        allowedTo('manager', 'admin'),
+        authService.authorizationSecurity,
+        // authService.allowedTo('manager', 'admin'),
         uploadProductImages,
         resizeImage,
         updateProductValidator,
         updateProduct
     )
     .delete(
-        authorizationSecurity,
-        allowedTo('admin'),
+        authService.authorizationSecurity,
+        // authService.allowedTo('admin'),
         deleteProductValidator,
         deleteProduct
     )

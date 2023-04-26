@@ -1,7 +1,5 @@
 const express = require('express')
 
-const router = express.Router()
-
 const {
     signup,
     signin
@@ -19,7 +17,7 @@ const {
 
 } = require('../utilities/validators/authValidator')
 
-
+const router = express.Router()
 
 router.route('/signup')
     .post(signupValidator, signup)

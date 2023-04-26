@@ -1,10 +1,11 @@
-const UserModel = require('../models/userModel')
-const factory = require('./handlers/handlersFactory')
-const { uploadSingleImage } = require('../middlewares/imageMiddlewares/uploadImageMiddleware')
+const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const { v4: uuidv4 } = require('uuid')
 const sharp = require('sharp')
-const bcrypt = require('bcryptjs')
+const UserModel = require('../models/userModel')
+const factory = require('./handlers/handlersFactory')
+const { uploadSingleImage } = require('../middlewares/imageMiddlewares/uploadImageMiddleware')
+const ApiError = require('../utilities/apiError')
 
 exports.uploadUserImage = uploadSingleImage('profileImage')
 

@@ -36,6 +36,9 @@ const globalError = (error, req, res, next) => {
                 case 'TokenExpiredError':
                     handleJWTExpired()
                     break
+                default:
+                    handleJWTInvalidSignature()
+                    break
             }
             errorForProduction(error, res)
             break

@@ -1,6 +1,6 @@
 const crypto = require('crypto')
-const UserModel = require('../models/userModel')
 const asyncHandler = require('express-async-handler')
+const UserModel = require('../models/userModel')
 const ApiError = require('../utilities/apiError')
 const sendEmail = require('../utilities/sendEmail')
 const { generateJWTToken } = require('./authService')

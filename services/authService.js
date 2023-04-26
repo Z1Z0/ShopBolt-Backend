@@ -1,8 +1,8 @@
 const asyncHandler = require('express-async-handler')
-const ApiError = require('../utilities/apiError')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const UserModel = require('../models/userModel')
+const ApiError = require('../utilities/apiError')
 
 const generateJWTToken = (userID) => jwt.sign({ userID: userID }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRE_DATE
@@ -11,7 +11,7 @@ const generateJWTToken = (userID) => jwt.sign({ userID: userID }, process.env.JW
 // @desc    Signup users
 // @route   POST /api/v1/auth/signup
 // @access  Public
-exports.signup = asyncHandler(async (req, res, next) => {
+const signup = asyncHandler(async (req, res, next) => {
     const user = await UserModel.create({
         name: req.body.name,
         email: req.body.email,
@@ -26,7 +26,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
 // @desc    Signin users
 // @route   POST /api/v1/auth/signin
 // @access  Public
-exports.signin = asyncHandler(async (req, res, next) => {
+const signin = asyncHandler(async (req, res, next) => {
     const user = await UserModel.findOne({ email: req.body.email })
 
     if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
@@ -39,7 +39,7 @@ exports.signin = asyncHandler(async (req, res, next) => {
 })
 
 // @desc    Make sure the user signed in
-exports.authorizationSecurity = asyncHandler(async (req, res, next) => {
+const authorizationSecurity = asyncHandler(async (req, res, next) => {
     let token
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1]
@@ -69,7 +69,7 @@ exports.authorizationSecurity = asyncHandler(async (req, res, next) => {
     next()
 })
 
-exports.allowedTo = (...roles) => asyncHandler(async (req, res, next) => {
+const allowedTo = (...roles) => asyncHandler(async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
         return next(new ApiError('You are not allowed to access this route', 403))
     }
@@ -77,4 +77,4 @@ exports.allowedTo = (...roles) => asyncHandler(async (req, res, next) => {
     next()
 })
 
-module.exports = { generateJWTToken }
+module.exports = { generateJWTToken, authorizationSecurity, allowedTo, signup, signin }

@@ -2,7 +2,7 @@ const express = require('express')
 
 const router = express.Router()
 
-const { authorizationSecurity, allowedTo } = require('../services/authService')
+const authService = require('../services/authService')
 
 const {
     getUsers,
@@ -26,13 +26,13 @@ const {
 
 router.route('/')
     .get(
-        authorizationSecurity,
-        allowedTo('admin', 'manager'),
+        authService.authorizationSecurity,
+        authService.allowedTo('admin', 'manager'),
         getUsers
     )
     .post(
-        authorizationSecurity,
-        allowedTo('manager', 'admin'),
+        authService.authorizationSecurity,
+        authService.allowedTo('manager', 'admin'),
         uploadUserImage,
         resizeImage,
         createUserValidator,
@@ -40,7 +40,7 @@ router.route('/')
     )
 
 router.route('/userInfo')
-    .get(authorizationSecurity, getLoggedUserData, getUser)
+    .get(authService.authorizationSecurity, getLoggedUserData, getUser)
 
 router.route('/:id')
     .get(
@@ -48,16 +48,16 @@ router.route('/:id')
         getUser
     )
     .put(
-        authorizationSecurity,
-        allowedTo('admin'),
+        authService.authorizationSecurity,
+        authService.allowedTo('admin'),
         uploadUserImage,
         resizeImage,
         updateUserValidator,
         updateUser
     )
     .delete(
-        authorizationSecurity,
-        allowedTo('admin'),
+        authService.authorizationSecurity,
+        authService.allowedTo('admin'),
         deleteUserValidator,
         deleteUser
     )

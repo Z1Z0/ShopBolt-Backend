@@ -2,7 +2,7 @@ const express = require('express')
 
 const router = express.Router()
 
-const { authorizationSecurity, allowedTo } = require('../services/authService')
+const authService = require('../services/authService')
 
 const {
     getBrands,
@@ -26,8 +26,8 @@ router.route('/')
         getBrands
     )
     .post(
-        authorizationSecurity,
-        allowedTo('manager', 'admin'),
+        authService.authorizationSecurity,
+        // authService.allowedTo('manager', 'admin'),
         uploadBrandImage,
         resizeImage,
         createBrandValidator,
@@ -40,16 +40,16 @@ router.route('/:id')
         getBrand
     )
     .put(
-        authorizationSecurity,
-        allowedTo('manager', 'admin'),
+        authService.authorizationSecurity,
+        // authService.allowedTo('manager', 'admin'),
         uploadBrandImage,
         resizeImage,
         updateBrandValidator,
         updateBrand
     )
     .delete(
-        authorizationSecurity,
-        allowedTo('admin'),
+        authService.authorizationSecurity,
+        // authService.allowedTo('admin'),
         deleteBrandValidator,
         deleteBrand
     )
