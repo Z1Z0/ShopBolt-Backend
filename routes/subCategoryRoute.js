@@ -22,35 +22,12 @@ const {
 const router = express.Router({ mergeParams: true })
 
 router.route('/')
-    .post(
-        authorizationSecurity,
-        allowedTo('manager', 'admin'),
-        setCategoryIDToBody,
-        createSubCategoryValidator,
-        createSubCategory
-    )
-    .get(
-        createFilterObject,
-        getSubCategories
-    )
-
+    .post(authorizationSecurity, allowedTo('manager', 'admin'), setCategoryIDToBody, createSubCategoryValidator, createSubCategory)
+    .get(createFilterObject, getSubCategories)
 
 router.route('/:id')
-    .get(
-        getSubCategoryValidator,
-        getSubCategory
-    )
-    .put(
-        authorizationSecurity,
-        allowedTo('manager', 'admin'),
-        updateSubCategoryValidator,
-        updateSubCategory
-    )
-    .delete(
-        authorizationSecurity,
-        allowedTo('admin'),
-        deleteSubCategoryValidator,
-        deleteSubCategory
-    )
+    .get(getSubCategoryValidator, getSubCategory)
+    .put(authorizationSecurity, allowedTo('manager', 'admin'), updateSubCategoryValidator, updateSubCategory)
+    .delete(authorizationSecurity, allowedTo('admin'), deleteSubCategoryValidator, deleteSubCategory)
 
 module.exports = router

@@ -138,6 +138,62 @@ exports.changeUserPasswordValidator = [
     validatorMiddleware
 ]
 
+exports.changeLoggedUserPasswordValidator = [
+    body('currentPassword')
+        .notEmpty()
+        .withMessage('Current password should not be empty'),
+    body('passwordConfirm')
+        .notEmpty()
+        .withMessage('Password confirmation should not be empty'),
+    body('password')
+        .notEmpty()
+        .withMessage('Password should not be empty')
+        .custom(async (password, { req }) => {
+            const user = await UserModel.findById(req.user._id)
+            if (!user) {
+                throw new Error(`There is no user for this ID ${req.user._id}`)
+            }
+            const isPasswordCorrect = await bcrypt.compare(req.body.currentPassword, user.password)
+
+            if (!isPasswordCorrect) {
+                throw new Error('Incorrect password')
+            }
+
+            if (password !== req.body.passwordConfirm) {
+                throw new Error('Passwords do not match')
+            }
+
+            const isPasswordEqualCurrentPassword = await bcrypt.compare(req.body.password, user.password)
+
+            if (isPasswordEqualCurrentPassword) {
+                throw new Error('The new password can not be the same as the current password')
+            }
+            return true
+        }),
+    validatorMiddleware
+]
+
+exports.changeLoggedUserDataValidator = [
+    body('name')
+        .optional()
+        .custom((val, { req }) => {
+            req.body.slug = slugify(val)
+            return true
+        }),
+    body('phone')
+        .optional()
+        .isMobilePhone('ar-EG')
+        .withMessage('Please enter valid phone number')
+        .custom((number) =>
+            UserModel.findOne({ phone: number }).then((phone) => {
+                if (phone) {
+                    return Promise.reject(new Error('Phone number already used'))
+                }
+            })
+        ),
+    validatorMiddleware
+]
+
 exports.deleteUserValidator = [
     check('id').isMongoId().withMessage('Invalid User ID format'),
     validatorMiddleware

@@ -6,6 +6,7 @@ const UserModel = require('../models/userModel')
 const factory = require('./handlers/handlersFactory')
 const { uploadSingleImage } = require('../middlewares/imageMiddlewares/uploadImageMiddleware')
 const ApiError = require('../utilities/apiError')
+const { generateJWTToken } = require('./authService')
 
 exports.uploadUserImage = uploadSingleImage('profileImage')
 
@@ -78,7 +79,34 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.deleteUser = factory.deleteOne(UserModel)
 
+// @desc    Get logged user data
+// @route   GET /api/v1/users/userInfo
+// @access  Private
 exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
     req.params.id = req.user._id
     next()
+})
+
+// @desc    Update logged user password
+// @route   GET /api/v1/users/changeLoggedUserPassword
+// @access  Private
+exports.changeLoggedUserPassword = asyncHandler(async (req, res, next) => {
+    const user = await UserModel.findByIdAndUpdate(req.user._id, { password: await bcrypt.hash(req.body.password, 12), passwordChangedAt: Date.now() }, { new: true })
+
+    const token = generateJWTToken(user._id)
+    res.status(200).json({ data: user, token })
+})
+
+// @desc    Update logged user data
+// @route   GET /api/v1/users/changeLoggedUserData
+// @access  Private
+exports.changeLoggedUserData = asyncHandler(async (req, res, next) => {
+    const updatedUser = await UserModel.findByIdAndUpdate(req.user._id, { name: req.body.name, phone: req.body.phone }, { new: true })
+
+    res.status(200).json({ data: updatedUser })
+})
+
+exports.deleteLoggedUser = asyncHandler(async (req, res, next) => {
+    await UserModel.findByIdAndDelete(req.user._id)
+    res.status(204).json()
 })
