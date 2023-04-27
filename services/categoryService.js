@@ -5,7 +5,7 @@ const { resizeImage } = require('../middlewares/imageMiddlewares/resizingImageMi
 
 exports.uploadCategoryImage = uploadSingleImage('image')
 
-exports.resizeImage = resizeImage('categories', 600, 600, 'jpeg', 95)
+exports.resizeImage = resizeImage('category', 'categories', 600, 600, 'jpeg', 95)
 
 // @desc    Get list of categories
 // @route   GET /api/v1/categories

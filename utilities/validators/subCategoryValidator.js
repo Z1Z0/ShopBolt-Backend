@@ -1,8 +1,8 @@
 const { check, body } = require('express-validator')
 const slugify = require('slugify')
-const validatorMiddleware = require('../../middlewares/validatorMiddleware')
+const { validatorMiddleware } = require('../../middlewares/validatorMiddleware')
 
-exports.getSubCategoryMiddleware = [
+exports.getSubCategoryValidator = [
     check('id').isMongoId().withMessage('Invalid SubCategory ID format'),
     validatorMiddleware
 ]
@@ -25,7 +25,7 @@ exports.createSubCategoryValidator = [
     validatorMiddleware
 ]
 
-exports.updateSubCategoryMiddleware = [
+exports.updateSubCategoryValidator = [
     check('id').isMongoId().withMessage('Invalid Subcategory ID format'),
     body('name').custom((val, { req }) => {
         req.body.slug = slugify(val)
@@ -34,7 +34,7 @@ exports.updateSubCategoryMiddleware = [
     validatorMiddleware
 ]
 
-exports.deleteSubCategoryMiddleware = [
+exports.deleteSubCategoryValidator = [
     check('id').isMongoId().withMessage('Invalid Subcategory ID format'),
     validatorMiddleware
 ]
