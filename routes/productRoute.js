@@ -21,6 +21,10 @@ const {
     deleteProductValidator
 } = require('../utilities/validators/productValidator')
 
+const reviewRoute = require('./reviewRoute')
+
+router.use('/:productID/reviews', reviewRoute)
+
 router.route('/')
     .get(getProducts)
     .post(authorizationSecurity, allowedTo('manager', 'admin'), uploadProductImages, resizeImage, createProductValidator, createProduct)

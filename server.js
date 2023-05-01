@@ -14,6 +14,7 @@ const brandsRoutes = require('./routes/brandRoute')
 const productsRoutes = require('./routes/productRoute')
 const userRoutes = require('./routes/userRoute')
 const authRoutes = require('./routes/authRoute')
+const reviewsRoutes = require('./routes/reviewRoute')
 
 // Utilities
 const ApiError = require('./utilities/apiError')
@@ -45,6 +46,7 @@ app.use(`${API}/brands`, brandsRoutes)
 app.use(`${API}/products`, productsRoutes)
 app.use(`${API}/users`, userRoutes)
 app.use(`${API}/auth`, authRoutes)
+app.use(`${API}/reviews`, reviewsRoutes)
 
 app.all('*', (req, res, next) => {
     next(new ApiError(`Can't find this route ${req.originalUrl}`, 400))
