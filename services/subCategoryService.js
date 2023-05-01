@@ -2,7 +2,7 @@ const SubCategoryModel = require('../models/subCategoryModel')
 
 const factory = require('./handlers/handlersFactory')
 
-// Nested Route for Create
+// Nested Route for GET
 exports.createFilterObject = (req, res, next) => {
 
     let filterObject = {}
@@ -13,7 +13,7 @@ exports.createFilterObject = (req, res, next) => {
     next()
 }
 
-// Nested Route for Get
+// Nested Route for POST
 exports.setCategoryIDToBody = (req, res, next) => {
     if (!req.body.category) {
         req.body.category = req.params.categoryID

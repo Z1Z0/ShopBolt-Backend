@@ -7,9 +7,15 @@ exports.createOne = (Model) => asyncHandler(async (req, res) => {
     res.status(201).json({ data: document })
 })
 
-exports.getOne = (Model) => asyncHandler(async (req, res, next) => {
+exports.getOne = (Model, populateOptions) => asyncHandler(async (req, res, next) => {
     const { id } = req.params
-    const document = await Model.findById(id)
+    let query = Model.findById(id)
+
+    if (populateOptions) {
+        query = query.populate(populateOptions)
+    }
+
+    const document = await query
 
     if (!document) {
         return next(new ApiError(`There is no document for this id ${id}`, 404))
@@ -42,6 +48,9 @@ exports.updateOne = (Model) => asyncHandler(async (req, res, next) => {
     if (!document) {
         return next(new ApiError(`There is no document for this id ${req.params.id}`, 404))
     }
+
+    document.save()
+
     res.status(200).json({ data: document })
 })
 
@@ -52,5 +61,7 @@ exports.deleteOne = (Model) => asyncHandler(async (req, res, next) => {
     if (!document) {
         return next(new ApiError(`There is no document for this id ${id}`, 404))
     }
+
+    document.deleteOne()
     res.status(204).json()
 })
