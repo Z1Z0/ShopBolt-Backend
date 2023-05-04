@@ -9,6 +9,7 @@ const reviewsRoutes = require('./reviewRoute')
 const wishlistRoutes = require('./wishlistRoute')
 const addressRoutes = require('./addressesRoute')
 const couponRoutes = require('./couponRoute')
+const cartRoutes = require('./cartRoute')
 
 const mountRoutes = (app, ApiBaseURL) => {
     // Mount routes
@@ -22,6 +23,7 @@ const mountRoutes = (app, ApiBaseURL) => {
     app.use(`${ApiBaseURL}/wishlist`, wishlistRoutes)
     app.use(`${ApiBaseURL}/addresses`, addressRoutes)
     app.use(`${ApiBaseURL}/coupons`, couponRoutes)
+    app.use(`${ApiBaseURL}/cart`, cartRoutes)
 }
 
 module.exports = mountRoutes
