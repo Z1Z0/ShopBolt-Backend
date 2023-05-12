@@ -10,6 +10,7 @@ const wishlistRoutes = require('./wishlistRoute')
 const addressRoutes = require('./addressesRoute')
 const couponRoutes = require('./couponRoute')
 const cartRoutes = require('./cartRoute')
+const orderRoutes = require('./orderRoute')
 
 const mountRoutes = (app, ApiBaseURL) => {
     // Mount routes
@@ -24,6 +25,7 @@ const mountRoutes = (app, ApiBaseURL) => {
     app.use(`${ApiBaseURL}/addresses`, addressRoutes)
     app.use(`${ApiBaseURL}/coupons`, couponRoutes)
     app.use(`${ApiBaseURL}/cart`, cartRoutes)
+    app.use(`${ApiBaseURL}/orders`, orderRoutes)
 }
 
 module.exports = mountRoutes

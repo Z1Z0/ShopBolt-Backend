@@ -5,6 +5,8 @@ const express = require('express')
 const dotenv = require('dotenv')
 const morgan = require('morgan')
 const http = require('http')
+const cors = require('cors')
+const compression = require('compression')
 const databaseConnection = require('./config/database')
 
 // Utilities
@@ -24,6 +26,13 @@ const app = express()
 const PORT = process.env.PORT || 3002
 const server = http.createServer(app)
 const API = process.env.API_PATH || '/api/v1'
+
+// Enable cors
+app.use(cors())
+app.options('*', cors())
+
+// Compress all responses
+app.use(compression())
 
 // Middlewares
 app.use(express.json())
