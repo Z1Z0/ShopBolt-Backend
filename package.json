@@ -4,7 +4,8 @@
   "description": "An e-commerce website using MERN Stack",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "author": "ahmedabdelaziz500@gmail.com",
   "license": "ISC",
