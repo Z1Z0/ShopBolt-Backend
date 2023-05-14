@@ -44,6 +44,13 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
     console.log(`mode: ${process.env.NODE_ENV}`)
 }
+app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook-checkout') {
+        next() // Do nothing with the body because I need it in a raw state.
+    } else {
+        express.json()(req, res, next);  // ONLY do express.json() if the received request is NOT a WebHook from Stripe.
+    }
+});
 
 // Stripe webhook checkout
 app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhookCheckout)
