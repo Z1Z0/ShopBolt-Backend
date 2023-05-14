@@ -35,9 +35,6 @@ app.options('*', cors())
 // Compress all responses
 app.use(compression())
 
-// Stripe webhook checkout
-app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhookCheckout)
-
 // Middlewares
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'uploads')))
@@ -48,6 +45,8 @@ if (process.env.NODE_ENV === 'development') {
 
 // Mount routes
 mountRoutes(app, API)
+// Stripe webhook checkout
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhookCheckout)
 
 app.all('*', (req, res, next) => {
     next(new ApiError(`Can't find this route ${req.originalUrl}`, 400))
