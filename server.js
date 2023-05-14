@@ -17,6 +17,7 @@ const globalError = require('./middlewares/errorMiddleware')
 
 // Routes
 const mountRoutes = require('./routes/index')
+const { webhookCheckout } = require('./services/orderService')
 
 // Dotenv config
 dotenv.config({ path: 'config.env' })
@@ -33,6 +34,9 @@ app.options('*', cors())
 
 // Compress all responses
 app.use(compression())
+
+// Stripe webhook checkout
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhookCheckout)
 
 // Middlewares
 app.use(express.json())

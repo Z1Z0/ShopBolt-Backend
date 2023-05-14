@@ -11,14 +11,36 @@ async function createCheckoutSession(products, req) {
                     name: item.product.title,
                     description: item.product.description,
                 },
-                unit_amount: item.price * 100
+                unit_amount: item.price * 100,
             },
-            quantity: 1
+            quantity: 1,
+
         }
     })
 
+    // const createCustomer = async (name, email, phone, line1, city, state) => {
+    //     const customer = await stripe.customers.create({
+    //         name,
+    //         email,
+    //         phone,
+    //         shipping: {
+    //             name,
+    //             phone,
+    //             address: {
+    //                 line1: line1,
+    //                 city: city,
+    //                 state: state,
+    //                 country: 'EG',
+    //                 postal_code: '12345',
+    //             },
+    //         },
+    //     });
+    //     return customer.id
+    // }
+
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
+        // customer: await createCustomer(req.user.name, req.user.email, req.body.phone, req.body.line1, req.body.city, req.body.state),
         line_items: lineItems,
         shipping_options: [
             {
@@ -47,7 +69,8 @@ async function createCheckoutSession(products, req) {
         success_url: `${req.protocol}://${req.get('host')}/orders`,
         cancel_url: `${req.protocol}://${req.get('host')}/cart`,
         customer_email: req.user.email,
-        client_reference_id: req.params.cartID
+        client_reference_id: req.params.cartID,
+        metadata: req.body.shippingAddress,
     });
 
     return session
