@@ -10,6 +10,7 @@ const compression = require('compression')
 const databaseConnection = require('./config/database')
 
 // Utilities
+dotenv.config({ path: 'config.env' })
 const ApiError = require('./utilities/apiError')
 
 // Middlewares
@@ -19,8 +20,7 @@ const globalError = require('./middlewares/errorMiddleware')
 const mountRoutes = require('./routes/index')
 const { webhookCheckout } = require('./services/orderService')
 
-// Dotenv config
-dotenv.config({ path: 'config.env' })
+
 
 // Variables
 const app = express()
@@ -35,6 +35,8 @@ app.options('*', cors())
 // Compress all responses
 app.use(compression())
 
+
+
 // Middlewares
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'uploads')))
@@ -43,10 +45,12 @@ if (process.env.NODE_ENV === 'development') {
     console.log(`mode: ${process.env.NODE_ENV}`)
 }
 
-// Mount routes
-mountRoutes(app, API)
 // Stripe webhook checkout
 app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhookCheckout)
+
+// Mount routes
+mountRoutes(app, API)
+
 
 app.all('*', (req, res, next) => {
     next(new ApiError(`Can't find this route ${req.originalUrl}`, 400))
