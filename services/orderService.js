@@ -1,6 +1,6 @@
 const dotenv = require('dotenv')
 dotenv.config({ path: 'config.env' })
-// const stripe = require('stripe')('sk_test_51N5p0KKDCzidcwS0jZLX4b9ENoETrucsleDILqYj6wpVJbhHiz5kGf5XLU9BPbaiPOo8FN8wmVpBmFDp9Cz5alpM00NGpzaSBK')
+const stripe = require('stripe')(process.env.STRIPE_SECRET)
 const asyncHandler = require('express-async-handler')
 const ApiError = require('../utilities/apiError')
 const factory = require('./handlers/handlersFactory')
@@ -8,7 +8,7 @@ const OrderModel = require('../models/orderModel')
 const CartModel = require('../models/cartModel')
 const ProductModel = require('../models/productModel')
 const UserModel = require('../models/userModel')
-const stripe = require('../utilities/stripe')
+const { createCheckoutSession } = require('../utilities/stripe')
 
 
 exports.createCashOrder = asyncHandler(async (req, res, next) => {
@@ -99,7 +99,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
 
     // const cartPrice = cart.totalPriceAfterDiscount ? cart.totalPriceAfterDiscount : cart.totalCartPrice
 
-    const session = await stripe.createCheckoutSession(cart.cartItems, req)
+    const session = await createCheckoutSession(cart.cartItems, req)
 
     res.status(200).json({ status: 'success', session })
 })
