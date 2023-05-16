@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const UserModel = require('../models/userModel')
 const ApiError = require('../utilities/apiError')
+const { sanitizeUser } = require('../utilities/sanitizeData')
 
 const generateJWTToken = (userID) => jwt.sign({ userID: userID }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRE_DATE
@@ -20,7 +21,7 @@ const signup = asyncHandler(async (req, res, next) => {
 
     const token = generateJWTToken(user._id)
 
-    res.status(201).json({ data: user, token })
+    res.status(201).json({ data: sanitizeUser(user), token })
 })
 
 // @desc    Signin users
@@ -35,7 +36,7 @@ const signin = asyncHandler(async (req, res, next) => {
 
     const token = generateJWTToken(user._id)
 
-    res.status(200).json({ data: user, token })
+    res.status(200).json({ data: sanitizeUser(user), token })
 })
 
 // @desc    Make sure the user signed in
