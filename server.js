@@ -1,5 +1,4 @@
 const path = require('path')
-
 // Packages
 const express = require('express')
 const dotenv = require('dotenv')
@@ -8,6 +7,12 @@ const http = require('http')
 const cors = require('cors')
 const compression = require('compression')
 const databaseConnection = require('./config/database')
+
+// Security libraries
+const rateLimit = require('express-rate-limit')
+const hpp = require('hpp')
+const mongoSanitize = require('express-mongo-sanitize')
+const xss = require('xss-clean')
 
 // Utilities
 dotenv.config({ path: 'config.env' })
@@ -20,13 +25,18 @@ const globalError = require('./middlewares/errorMiddleware')
 const mountRoutes = require('./routes/index')
 const { webhookCheckout } = require('./services/orderService')
 
-
-
 // Variables
 const app = express()
 const PORT = process.env.PORT || 3002
 const server = http.createServer(app)
 const API = process.env.API_PATH || '/api/v1'
+
+// Limiter for calling APIs
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 50,
+    message: 'Too much requests from this IP'
+})
 
 // Enable cors
 app.use(cors())
@@ -36,15 +46,27 @@ app.options('*', cors())
 app.use(compression())
 
 
-
 // Middlewares
 app.use(express.json({
-    limit: '5mb',
+    limit: '1mb',
     verify: (req, res, buf) => {
         req.rawBody = buf.toString()
     }
 }))
 app.use(express.static(path.join(__dirname, 'uploads')))
+
+// Sanitize data to prevent NOSQL injection
+app.use(mongoSanitize())
+// Filtering special characters to prevent XSS attacks
+app.use(xss())
+
+// A middleware to prevent brute force attack
+app.use('/api/v1/auth', limiter)
+
+// A middleware to protect against HTTP Parameter Pollution attacks
+app.use(hpp({ whitelist: ['price'] }))
+
+
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
     console.log(`mode: ${process.env.NODE_ENV}`)
@@ -55,7 +77,6 @@ app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhook
 
 // Mount routes
 mountRoutes(app, API)
-
 
 app.all('*', (req, res, next) => {
     next(new ApiError(`Can't find this route ${req.originalUrl}`, 400))
